@@ -43,7 +43,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # The GITHUB_TOKEN is there by default so you just need to keep it like it is and not necessarily need to add it as secret as it will throw an error. [More Details](https://docs.github.com/en/actions/security-guides/automatic-token-authentication#about-the-github_token-secret)
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           OPENAI_API_MODEL: "gpt-4o" # Optional: defaults to "gpt-4o"
-          EXCLUDE: "**/*.json, **/*.md" # Optional: exclude patterns separated by commas
+          EXCLUDE: "**/*.json, **/*.md, yarn.lock, dist/**, pnpm-lock.yaml" # Optional: exclude patterns separated by commas
           LANGUAGE: "English" # Optional: Language in which you want the response, defaults to "English"
           MAX_TOKENS: "700" # Optional: Maximum number of tokens that can be generated per analysis. defaults to 700
           CUSTOM_PROMPTS: |
