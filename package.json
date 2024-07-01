@@ -1,0 +1,29 @@
+{
+  "name": "github-actions-ai-code-review",
+  "version": "1.0.0",
+  "description": "Open AI powered code reviews",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "package": "ncc build --source-map --license licenses.txt",
+    "format": "prettier --write .",
+    "lint": "prettier --check ."
+  },
+  "keywords": ["AI Code Review", "Github Actions Code Reviews", "AI CR's"],
+  "author": "Aleksandar Grbic",
+  "license": "MIT",
+  "dependencies": {
+    "@actions/core": "1.10.1",
+    "@octokit/rest": "21.0.0",
+    "minimatch": "9.0.5",
+    "openai": "4.52.2",
+    "parse-diff": "0.11.1",
+    "ts-node": "10.9.2"
+  },
+  "devDependencies": {
+    "@types/node": "20.14.9",
+    "@vercel/ncc": "0.38.1",
+    "prettier": "3.3.2",
+    "typescript": "5.5.2"
+  }
+}
