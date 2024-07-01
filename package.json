@@ -2,7 +2,7 @@
   "name": "github-actions-ai-code-review",
   "version": "1.0.0",
   "description": "Open AI powered code reviews",
-  "main": "dist/index.js",
+  "main": "lib/index.js",
   "scripts": {
     "build": "tsc",
     "package": "ncc build --source-map --license licenses.txt",
