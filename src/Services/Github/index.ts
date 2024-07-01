@@ -1,21 +1,18 @@
 import { Octokit } from "@octokit/rest";
 import { readFileSync } from "fs";
-import * as core from "@actions/core";
 import { IComment, IPullRequest } from "../../types";
-
+import githubHttpClient from "../../HttpClients/Github";
 class GithubService {
   octokit: Octokit;
-  GITHUB_TOKEN: string;
 
-  constructor() {
+  constructor(githubHttpClient: Octokit) {
     this.getRepository = this.getRepository.bind(this);
     this.getPRDetails = this.getPRDetails.bind(this);
     this.getDiff = this.getDiff.bind(this);
     this.getUpdatedDiff = this.getUpdatedDiff.bind(this);
     this.createComment = this.createComment.bind(this);
 
-    this.GITHUB_TOKEN = core.getInput("GITHUB_TOKEN");
-    this.octokit = new Octokit({ auth: this.GITHUB_TOKEN });
+    this.octokit = githubHttpClient;
   }
 
   getRepository() {
@@ -101,4 +98,4 @@ class GithubService {
   }
 }
 
-export default new GithubService();
+export default new GithubService(githubHttpClient);

@@ -4,14 +4,12 @@ import * as core from "@actions/core";
 import { createPrompt } from "./ai";
 import { IPullRequest } from "./types";
 import openAIService from "./Services/OpenAI";
+import githubHttpClient from "./HttpClients/Github";
 
-const GITHUB_TOKEN: string = core.getInput("GITHUB_TOKEN");
 const CUSTOM_PROMPTS = core
   .getMultilineInput("CUSTOM_PROMPTS")
   .map((customPrompt) => `- ${customPrompt}`)
   .join("\n");
-
-const octokit = new Octokit({ auth: GITHUB_TOKEN });
 
 export async function createReviewComment(
   pr: IPullRequest,
@@ -19,7 +17,7 @@ export async function createReviewComment(
 ): Promise<void> {
   const { owner, repo, pull_number } = pr;
 
-  await octokit.pulls.createReview({
+  await githubHttpClient.pulls.createReview({
     owner,
     repo,
     pull_number,

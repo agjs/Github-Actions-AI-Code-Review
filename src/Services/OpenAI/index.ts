@@ -2,20 +2,17 @@ import * as core from "@actions/core";
 import OpenAI from "openai";
 import { getOpenAIConfig } from "./constant";
 import { ChatCompletion } from "openai/resources";
+import openAIHttpClient from "../../HttpClients/OpenAI";
 
 class OpenAIService {
   OPENAI_API_MODEL: string;
-  OPENAI_API_KEY: string;
   MAX_TOKENS: number;
   openai: OpenAI;
 
-  constructor() {
+  constructor(openAIHttpClient: OpenAI) {
     this.OPENAI_API_MODEL = core.getInput("OPENAI_API_MODEL");
-    this.OPENAI_API_KEY = core.getInput("OPENAI_API_KEY");
     this.MAX_TOKENS = Number(core.getInput("MAX_TOKENS"));
-    this.openai = new OpenAI({
-      apiKey: this.OPENAI_API_KEY,
-    });
+    this.openai = openAIHttpClient;
 
     this.getReviews = this.getReviews.bind(this);
   }
@@ -50,4 +47,4 @@ class OpenAIService {
   }
 }
 
-export default new OpenAIService();
+export default new OpenAIService(openAIHttpClient);
