@@ -3,10 +3,11 @@ import { filterDiffFiles, getDifferenceByActionType } from "./diff";
 import { createReviewComment, getComments } from "./comments";
 import parseDiff from "parse-diff";
 import { readFileSync } from "fs";
+import { GitHubEvent } from "./types";
 
 async function main() {
   const pr = await getPRDetails();
-  const event = JSON.parse(
+  const event: GitHubEvent = JSON.parse(
     readFileSync(process.env.GITHUB_EVENT_PATH ?? "", "utf8"),
   );
 

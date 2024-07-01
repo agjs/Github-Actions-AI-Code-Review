@@ -3,6 +3,7 @@ import { File as IParseDiffFile } from "parse-diff";
 import * as core from "@actions/core";
 import { minimatch } from "minimatch";
 import { getPRDetails } from "./pr";
+import { GitHubEvent } from "./types";
 
 const GITHUB_TOKEN: string = core.getInput("GITHUB_TOKEN");
 const octokit = new Octokit({ auth: GITHUB_TOKEN });
@@ -57,11 +58,7 @@ export function filterDiffFiles(
   });
 }
 
-export const getDifferenceByActionType = async (event: {
-  action: string;
-  before: string;
-  after: string;
-}) => {
+export const getDifferenceByActionType = async (event: GitHubEvent ) => {
   const prDetails = await getPRDetails();
 
   if (event.action === "opened" || event.action === "review_requested") {
@@ -70,7 +67,7 @@ export const getDifferenceByActionType = async (event: {
       prDetails.repo,
       prDetails.pull_number,
     );
-  } else if (event.action === "synchronize") {
+  } else if (event.action === "synchronize" && event.before && event.after) {
     const newBaseSha = event.before;
     const newHeadSha = event.after;
 

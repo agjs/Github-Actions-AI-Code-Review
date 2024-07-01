@@ -307,7 +307,7 @@ const getDifferenceByActionType = (event) => __awaiter(void 0, void 0, void 0, f
     if (event.action === "opened" || event.action === "review_requested") {
         return yield getDiff(prDetails.owner, prDetails.repo, prDetails.pull_number);
     }
-    else if (event.action === "synchronize") {
+    else if (event.action === "synchronize" && event.before && event.after) {
         const newBaseSha = event.before;
         const newHeadSha = event.after;
         return yield getUpdatedDiff(prDetails.owner, prDetails.repo, newBaseSha, newHeadSha);

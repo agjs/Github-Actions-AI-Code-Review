@@ -9,7 +9,11 @@
     "format": "prettier --write .",
     "lint": "prettier --check ."
   },
-  "keywords": ["AI Code Review", "Github Actions Code Reviews", "AI CR's"],
+  "keywords": [
+    "AI Code Review",
+    "Github Actions Code Reviews",
+    "AI CR's"
+  ],
   "author": "Aleksandar Grbic",
   "license": "MIT",
   "dependencies": {
