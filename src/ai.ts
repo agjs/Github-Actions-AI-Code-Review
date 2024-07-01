@@ -1,16 +1,7 @@
 import OpenAI from "openai";
 import * as core from "@actions/core";
 import { File as IParseDiffFile, Chunk } from "parse-diff";
-import { IPullRequest } from "./pr";
-
-const OPENAI_API_KEY: string = core.getInput("OPENAI_API_KEY");
-const OPENAI_API_MODEL: string = core.getInput("OPENAI_API_MODEL");
-const MAX_TOKENS: number = Number(core.getInput("MAX_TOKENS"));
-const LANGUAGE: string = core.getInput("LANGUAGE");
-
-const openai = new OpenAI({
-  apiKey: OPENAI_API_KEY,
-});
+import { IPullRequest } from "./types";
 
 export function createPrompt(
   file: IParseDiffFile,
@@ -46,43 +37,4 @@ ${chunk.changes
   .join("\n")}
 \`\`\`
 `;
-}
-
-export async function getAIResponse(prompt: string): Promise<Array<{
-  lineNumber: string;
-  reviewComment: string;
-}> | null> {
-  const config = {
-    model: OPENAI_API_MODEL,
-    temperature: 0.2,
-    MAX_TOKENS: MAX_TOKENS,
-    top_p: 1,
-    frequency_penalty: 0,
-    presence_penalty: 0,
-  };
-
-  try {
-    const response = await openai.chat.completions.create({
-      ...config,
-      ...(OPENAI_API_MODEL === "gpt-4o"
-        ? { response_format: { type: "json_object" } }
-        : {}),
-      messages: [
-        {
-          role: "system",
-          content: prompt,
-        },
-        {
-          role: "system",
-          content: `(OOC: Answer in ${LANGUAGE})`,
-        },
-      ],
-    });
-
-    const res = response.choices[0].message?.content?.trim() || "{}";
-    return JSON.parse(res).reviews;
-  } catch (error) {
-    console.error("Error:", error);
-    return null;
-  }
 }

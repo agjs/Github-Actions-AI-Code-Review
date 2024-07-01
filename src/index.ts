@@ -1,30 +1,21 @@
-import { getPRDetails } from "./pr";
-import { filterDiffFiles, getDifferenceByActionType } from "./diff";
+import { getDifference } from "./diff";
 import { createReviewComment, getComments } from "./comments";
-import parseDiff from "parse-diff";
-import { readFileSync } from "fs";
-import { GitHubEvent } from "./types";
+import githubService from "./Services/Github";
 
 async function main() {
-  const pr = await getPRDetails();
-  const event: GitHubEvent = JSON.parse(
-    readFileSync(process.env.GITHUB_EVENT_PATH ?? "", "utf8"),
-  );
+  const pr = await githubService.getPRDetails();
+  const diff = await getDifference(pr);
 
-  const diff = await getDifferenceByActionType(event);
-  if (!diff) {
+  if (!diff || (Array.isArray(diff) && !diff.length)) {
     return;
   }
 
-  const parsedDiff = parseDiff(diff);
-  const filteredDiff = filterDiffFiles(parsedDiff);
-
-  const comments = await getComments(filteredDiff, pr);
+  const comments = await getComments(diff, pr);
   if (!comments.length) {
     return;
   }
 
-  await createReviewComment(pr.owner, pr.repo, pr.pull_number, comments);
+  await githubService.createComment(pr, comments);
 }
 
 main().catch((error) => {

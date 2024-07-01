@@ -6,9 +6,11 @@ export interface IRepository {
 }
 
 export interface IPullRequest {
-  number: number;
   title: string;
-  body: string;
+  description: string;
+  owner: string;
+  pull_number: number;
+  repo: string;
 }
 
 export interface IPullRequestEvent {
@@ -16,15 +18,19 @@ export interface IPullRequestEvent {
   number: number;
   repository: IRepository;
   pull_request: IPullRequest;
-  before?: string; // Optional, only exists for certain actions
-  after?: string; // Optional, only exists for certain actions
+  before?: string;
+  after?: string;
 }
 
-export interface IPushEvent {
-  ref: string;
-  before: string;
-  after: string;
-  repository: IRepository;
+export type GitHubEvent = IPullRequestEvent;
+
+export enum ResponseFormatType {
+  Text = "text",
+  JsonObject = "json_object",
 }
 
-export type GitHubEvent = IPullRequestEvent
+export interface IComment {
+  body: string;
+  path: string;
+  line: number;
+}

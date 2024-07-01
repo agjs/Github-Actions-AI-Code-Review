@@ -1,7 +1,196 @@
 require('./sourcemap-register.js');/******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
-/***/ 2178:
+/***/ 2712:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+const rest_1 = __nccwpck_require__(2861);
+const fs_1 = __nccwpck_require__(7147);
+const core = __importStar(__nccwpck_require__(9093));
+class GithubService {
+    constructor() {
+        this.getRepository = this.getRepository.bind(this);
+        this.getPRDetails = this.getPRDetails.bind(this);
+        this.getDiff = this.getDiff.bind(this);
+        this.getUpdatedDiff = this.getUpdatedDiff.bind(this);
+        this.createComment = this.createComment.bind(this);
+        this.GITHUB_TOKEN = core.getInput("GITHUB_TOKEN");
+        this.octokit = new rest_1.Octokit({ auth: this.GITHUB_TOKEN });
+    }
+    getRepository() {
+        const repository = JSON.parse((0, fs_1.readFileSync)(process.env.GITHUB_EVENT_PATH || "", "utf8"));
+        return {
+            name: repository.repository.name,
+            owner: repository.owner.login,
+            pullRequestNumber: repository.number,
+            action: repository.action,
+            before: repository.before,
+            after: repository.after,
+        };
+    }
+    getPRDetails() {
+        return __awaiter(this, void 0, void 0, function* () {
+            var _a, _b;
+            const { name, owner, pullRequestNumber } = this.getRepository();
+            const { data } = yield this.octokit.pulls.get({
+                owner,
+                repo: name,
+                pull_number: pullRequestNumber,
+            });
+            return {
+                title: (_a = data.title) !== null && _a !== void 0 ? _a : "",
+                description: (_b = data.body) !== null && _b !== void 0 ? _b : "",
+                owner,
+                repo: name,
+                pull_number: pullRequestNumber,
+            };
+        });
+    }
+    getDiff(repositoryOwner, repositoryName, pullRequestNumber) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const response = yield this.octokit.pulls.get({
+                owner: repositoryOwner,
+                repo: repositoryName,
+                pull_number: pullRequestNumber,
+                mediaType: { format: "diff" },
+            });
+            // @ts-expect-error - response.data is a string because of mediaType format: "diff"
+            return response.data;
+        });
+    }
+    getUpdatedDiff(repositoryOwner, repositoryName, baseSha, headSha) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const response = yield this.octokit.repos.compareCommits({
+                headers: {
+                    accept: "application/vnd.github.v3.diff",
+                },
+                owner: repositoryOwner,
+                repo: repositoryName,
+                base: baseSha,
+                head: headSha,
+            });
+            return String(response.data);
+        });
+    }
+    createComment(pr, comments) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { owner, repo, pull_number } = pr;
+            yield this.octokit.pulls.createReview({
+                owner,
+                repo,
+                pull_number,
+                comments,
+                event: "COMMENT",
+            });
+        });
+    }
+}
+exports["default"] = new GithubService();
+
+
+/***/ }),
+
+/***/ 8330:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.getOpenAIConfig = void 0;
+const core = __importStar(__nccwpck_require__(9093));
+const types_1 = __nccwpck_require__(6652);
+const getOpenAIConfig = (prompt) => {
+    const OPENAI_API_MODEL = core.getInput("OPENAI_API_MODEL");
+    const MAX_TOKENS = Number(core.getInput("MAX_TOKENS"));
+    const LANGUAGE = core.getInput("LANGUAGE");
+    const config = {
+        model: OPENAI_API_MODEL,
+        temperature: 0.2,
+        max_tokens: MAX_TOKENS,
+        top_p: 1,
+        frequency_penalty: 0,
+        presence_penalty: 0,
+        response_format: { type: types_1.ResponseFormatType.Text },
+        messages: [
+            {
+                role: "system",
+                content: prompt,
+            },
+            {
+                role: "system",
+                content: `(OOC: Answer in ${LANGUAGE})`,
+            },
+        ],
+    };
+    if (OPENAI_API_MODEL === "gpt-4o") {
+        config["response_format"] = { type: types_1.ResponseFormatType.JsonObject };
+    }
+    return config;
+};
+exports.getOpenAIConfig = getOpenAIConfig;
+
+
+/***/ }),
+
+/***/ 6754:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
 "use strict";
@@ -42,17 +231,55 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.createPrompt = createPrompt;
-exports.getAIResponse = getAIResponse;
-const openai_1 = __importDefault(__nccwpck_require__(3324));
 const core = __importStar(__nccwpck_require__(9093));
-const OPENAI_API_KEY = core.getInput("OPENAI_API_KEY");
-const OPENAI_API_MODEL = core.getInput("OPENAI_API_MODEL");
-const MAX_TOKENS = Number(core.getInput("MAX_TOKENS"));
-const LANGUAGE = core.getInput("LANGUAGE");
-const openai = new openai_1.default({
-    apiKey: OPENAI_API_KEY,
-});
+const openai_1 = __importDefault(__nccwpck_require__(3324));
+const constant_1 = __nccwpck_require__(8330);
+class OpenAIService {
+    constructor() {
+        this.OPENAI_API_MODEL = core.getInput("OPENAI_API_MODEL");
+        this.OPENAI_API_KEY = core.getInput("OPENAI_API_KEY");
+        this.MAX_TOKENS = Number(core.getInput("MAX_TOKENS"));
+        this.openai = new openai_1.default({
+            apiKey: this.OPENAI_API_KEY,
+        });
+        this.getReviews = this.getReviews.bind(this);
+    }
+    /**
+     * Get reviews from OpenAI API.
+     * @param prompt - The prompt to send to OpenAI API.
+     * @returns Array of reviews or null if there is an error.
+     */
+    getReviews(prompt) {
+        return __awaiter(this, void 0, void 0, function* () {
+            var _a, _b;
+            const config = (0, constant_1.getOpenAIConfig)(prompt);
+            try {
+                const { choices } = (yield this.openai.chat.completions.create(config));
+                const [choice] = choices;
+                if (!((_a = choice.message) === null || _a === void 0 ? void 0 : _a.content)) {
+                    return null;
+                }
+                return (_b = JSON.parse(choice.message.content.trim())) === null || _b === void 0 ? void 0 : _b.reviews;
+            }
+            catch (error) {
+                console.error("Error:", error);
+                return null;
+            }
+        });
+    }
+}
+exports["default"] = new OpenAIService();
+
+
+/***/ }),
+
+/***/ 2178:
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.createPrompt = createPrompt;
 function createPrompt(file, chunk, prDetails, customPrompts) {
     return `Your task is to review pull requests. Instructions:
 - Provide the response in following JSON format:  {"reviews": [{"lineNumber":  <line_number>, "reviewComment": "<review comment>"}]}
@@ -82,39 +309,6 @@ ${chunk.changes
         .join("\n")}
 \`\`\`
 `;
-}
-function getAIResponse(prompt) {
-    return __awaiter(this, void 0, void 0, function* () {
-        var _a, _b;
-        const config = {
-            model: OPENAI_API_MODEL,
-            temperature: 0.2,
-            MAX_TOKENS: MAX_TOKENS,
-            top_p: 1,
-            frequency_penalty: 0,
-            presence_penalty: 0,
-        };
-        try {
-            const response = yield openai.chat.completions.create(Object.assign(Object.assign(Object.assign({}, config), (OPENAI_API_MODEL === "gpt-4o"
-                ? { response_format: { type: "json_object" } }
-                : {})), { messages: [
-                    {
-                        role: "system",
-                        content: prompt,
-                    },
-                    {
-                        role: "system",
-                        content: `(OOC: Answer in ${LANGUAGE})`,
-                    },
-                ] }));
-            const res = ((_b = (_a = response.choices[0].message) === null || _a === void 0 ? void 0 : _a.content) === null || _b === void 0 ? void 0 : _b.trim()) || "{}";
-            return JSON.parse(res).reviews;
-        }
-        catch (error) {
-            console.error("Error:", error);
-            return null;
-        }
-    });
 }
 
 
@@ -157,6 +351,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.createReviewComment = createReviewComment;
 exports.createComment = createComment;
@@ -164,14 +361,16 @@ exports.getComments = getComments;
 const rest_1 = __nccwpck_require__(2861);
 const core = __importStar(__nccwpck_require__(9093));
 const ai_1 = __nccwpck_require__(2178);
+const OpenAI_1 = __importDefault(__nccwpck_require__(6754));
 const GITHUB_TOKEN = core.getInput("GITHUB_TOKEN");
 const CUSTOM_PROMPTS = core
     .getMultilineInput("CUSTOM_PROMPTS")
     .map((customPrompt) => `- ${customPrompt}`)
     .join("\n");
 const octokit = new rest_1.Octokit({ auth: GITHUB_TOKEN });
-function createReviewComment(owner, repo, pull_number, comments) {
+function createReviewComment(pr, comments) {
     return __awaiter(this, void 0, void 0, function* () {
+        const { owner, repo, pull_number } = pr;
         yield octokit.pulls.createReview({
             owner,
             repo,
@@ -181,8 +380,8 @@ function createReviewComment(owner, repo, pull_number, comments) {
         });
     });
 }
-function createComment(file, chunk, aiResponses) {
-    return aiResponses.flatMap((aiResponse) => {
+function createComment(file, reviews) {
+    return reviews.flatMap((aiResponse) => {
         if (!file.to) {
             return [];
         }
@@ -193,21 +392,21 @@ function createComment(file, chunk, aiResponses) {
         };
     });
 }
-function getComments(parsedDiff, prDetails) {
+function getComments(diff, pr) {
     return __awaiter(this, void 0, void 0, function* () {
         const comments = [];
-        for (const file of parsedDiff) {
+        for (const file of diff) {
             if (file.to === "/dev/null") {
                 // Ignore deleted files
                 continue;
             }
             for (const chunk of file.chunks) {
-                const prompt = (0, ai_1.createPrompt)(file, chunk, prDetails, CUSTOM_PROMPTS);
-                const response = yield (0, ai_1.getAIResponse)(prompt);
-                if (response) {
-                    const newComments = createComment(file, chunk, response);
-                    if (newComments) {
-                        comments.push(...newComments);
+                const prompt = (0, ai_1.createPrompt)(file, chunk, pr, CUSTOM_PROMPTS);
+                const reviews = yield OpenAI_1.default.getReviews(prompt);
+                if (reviews) {
+                    const comments = createComment(file, reviews);
+                    if (comments) {
+                        comments.push(...comments);
                     }
                 }
             }
@@ -256,68 +455,45 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.getDifferenceByActionType = void 0;
-exports.getDiff = getDiff;
-exports.getUpdatedDiff = getUpdatedDiff;
-exports.filterDiffFiles = filterDiffFiles;
-const rest_1 = __nccwpck_require__(2861);
+exports.getDifference = exports.filterDiffFiles = void 0;
+const parse_diff_1 = __importDefault(__nccwpck_require__(1215));
 const core = __importStar(__nccwpck_require__(9093));
 const minimatch_1 = __nccwpck_require__(9557);
-const pr_1 = __nccwpck_require__(573);
-const GITHUB_TOKEN = core.getInput("GITHUB_TOKEN");
-const octokit = new rest_1.Octokit({ auth: GITHUB_TOKEN });
-function getDiff(owner, repo, pull_number) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const response = yield octokit.pulls.get({
-            owner,
-            repo,
-            pull_number,
-            mediaType: { format: "diff" },
-        });
-        // @ts-expect-error - response.data is a string
-        return response.data;
-    });
-}
-function getUpdatedDiff(owner, repo, baseSha, headSha) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const response = yield octokit.repos.compareCommits({
-            headers: {
-                accept: "application/vnd.github.v3.diff",
-            },
-            owner,
-            repo,
-            base: baseSha,
-            head: headSha,
-        });
-        return String(response.data);
-    });
-}
-function filterDiffFiles(parsedDiff) {
+const Github_1 = __importDefault(__nccwpck_require__(2712));
+const filterDiffFiles = (diff) => {
     const excludePatterns = core
         .getInput("EXCLUDE")
         .split(",")
         .map((s) => s.trim());
-    return parsedDiff.filter((file) => {
+    return (0, parse_diff_1.default)(diff).filter((file) => {
         return !excludePatterns.some((pattern) => { var _a; return (0, minimatch_1.minimatch)((_a = file.to) !== null && _a !== void 0 ? _a : "", pattern); });
     });
-}
-const getDifferenceByActionType = (event) => __awaiter(void 0, void 0, void 0, function* () {
-    const prDetails = yield (0, pr_1.getPRDetails)();
-    if (event.action === "opened" || event.action === "review_requested") {
-        return yield getDiff(prDetails.owner, prDetails.repo, prDetails.pull_number);
+};
+exports.filterDiffFiles = filterDiffFiles;
+const getDifference = (pr) => __awaiter(void 0, void 0, void 0, function* () {
+    const { action, before, after } = Github_1.default.getRepository();
+    let diff = null;
+    if (action === "opened" || action === "review_requested") {
+        const { owner, repo, pull_number } = pr;
+        diff = yield Github_1.default.getDiff(owner, repo, pull_number);
     }
-    else if (event.action === "synchronize" && event.before && event.after) {
-        const newBaseSha = event.before;
-        const newHeadSha = event.after;
-        return yield getUpdatedDiff(prDetails.owner, prDetails.repo, newBaseSha, newHeadSha);
+    if (action === "synchronize" && before && after) {
+        const newBaseSha = before;
+        const newHeadSha = after;
+        diff = yield Github_1.default.getUpdatedDiff(pr.owner, pr.repo, newBaseSha, newHeadSha);
+    }
+    if (diff) {
+        return (0, exports.filterDiffFiles)(diff);
     }
     else {
-        console.log("Unsupported event:", process.env.GITHUB_EVENT_NAME);
+        return null;
     }
-    return null;
 });
-exports.getDifferenceByActionType = getDifferenceByActionType;
+exports.getDifference = getDifference;
 
 
 /***/ }),
@@ -340,27 +516,21 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-const pr_1 = __nccwpck_require__(573);
 const diff_1 = __nccwpck_require__(7738);
 const comments_1 = __nccwpck_require__(3238);
-const parse_diff_1 = __importDefault(__nccwpck_require__(1215));
-const fs_1 = __nccwpck_require__(7147);
+const Github_1 = __importDefault(__nccwpck_require__(2712));
 function main() {
     return __awaiter(this, void 0, void 0, function* () {
-        var _a;
-        const pr = yield (0, pr_1.getPRDetails)();
-        const event = JSON.parse((0, fs_1.readFileSync)((_a = process.env.GITHUB_EVENT_PATH) !== null && _a !== void 0 ? _a : "", "utf8"));
-        const diff = yield (0, diff_1.getDifferenceByActionType)(event);
-        if (!diff) {
+        const pr = yield Github_1.default.getPRDetails();
+        const diff = yield (0, diff_1.getDifference)(pr);
+        if (!diff || (Array.isArray(diff) && !diff.length)) {
             return;
         }
-        const parsedDiff = (0, parse_diff_1.default)(diff);
-        const filteredDiff = (0, diff_1.filterDiffFiles)(parsedDiff);
-        const comments = yield (0, comments_1.getComments)(filteredDiff, pr);
+        const comments = yield (0, comments_1.getComments)(diff, pr);
         if (!comments.length) {
             return;
         }
-        yield (0, comments_1.createReviewComment)(pr.owner, pr.repo, pr.pull_number, comments);
+        yield Github_1.default.createComment(pr, comments);
     });
 }
 main().catch((error) => {
@@ -371,68 +541,18 @@ main().catch((error) => {
 
 /***/ }),
 
-/***/ 573:
-/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+/***/ 6652:
+/***/ ((__unused_webpack_module, exports) => {
 
 "use strict";
 
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.getPRDetails = getPRDetails;
-const fs_1 = __nccwpck_require__(7147);
-const rest_1 = __nccwpck_require__(2861);
-const core = __importStar(__nccwpck_require__(9093));
-const GITHUB_TOKEN = core.getInput("GITHUB_TOKEN");
-const octokit = new rest_1.Octokit({ auth: GITHUB_TOKEN });
-function getPRDetails() {
-    return __awaiter(this, void 0, void 0, function* () {
-        var _a, _b;
-        const { repository, number } = JSON.parse((0, fs_1.readFileSync)(process.env.GITHUB_EVENT_PATH || "", "utf8"));
-        const response = yield octokit.pulls.get({
-            owner: repository.owner.login,
-            repo: repository.name,
-            pull_number: number,
-        });
-        return {
-            owner: repository.owner.login,
-            repo: repository.name,
-            pull_number: number,
-            title: (_a = response.data.title) !== null && _a !== void 0 ? _a : "",
-            description: (_b = response.data.body) !== null && _b !== void 0 ? _b : "",
-        };
-    });
-}
+exports.ResponseFormatType = void 0;
+var ResponseFormatType;
+(function (ResponseFormatType) {
+    ResponseFormatType["Text"] = "text";
+    ResponseFormatType["JsonObject"] = "json_object";
+})(ResponseFormatType || (exports.ResponseFormatType = ResponseFormatType = {}));
 
 
 /***/ }),

@@ -1,8 +1,9 @@
 import { Octokit } from "@octokit/rest";
 import { File as IParseDiffFile, Chunk } from "parse-diff";
 import * as core from "@actions/core";
-import { IPullRequest } from "./pr";
-import { createPrompt, getAIResponse } from "./ai";
+import { createPrompt } from "./ai";
+import { IPullRequest } from "./types";
+import openAIService from "./Services/OpenAI";
 
 const GITHUB_TOKEN: string = core.getInput("GITHUB_TOKEN");
 const CUSTOM_PROMPTS = core
@@ -13,11 +14,11 @@ const CUSTOM_PROMPTS = core
 const octokit = new Octokit({ auth: GITHUB_TOKEN });
 
 export async function createReviewComment(
-  owner: string,
-  repo: string,
-  pull_number: number,
+  pr: IPullRequest,
   comments: Array<{ body: string; path: string; line: number }>,
 ): Promise<void> {
+  const { owner, repo, pull_number } = pr;
+
   await octokit.pulls.createReview({
     owner,
     repo,
@@ -29,13 +30,12 @@ export async function createReviewComment(
 
 export function createComment(
   file: IParseDiffFile,
-  chunk: Chunk,
-  aiResponses: Array<{
+  reviews: Array<{
     lineNumber: string;
     reviewComment: string;
   }>,
 ): Array<{ body: string; path: string; line: number }> {
-  return aiResponses.flatMap((aiResponse) => {
+  return reviews.flatMap((aiResponse) => {
     if (!file.to) {
       return [];
     }
@@ -49,25 +49,25 @@ export function createComment(
 }
 
 export async function getComments(
-  parsedDiff: IParseDiffFile[],
-  prDetails: IPullRequest,
+  diff: IParseDiffFile[],
+  pr: IPullRequest,
 ): Promise<Array<{ body: string; path: string; line: number }>> {
   const comments: Array<{ body: string; path: string; line: number }> = [];
 
-  for (const file of parsedDiff) {
+  for (const file of diff) {
     if (file.to === "/dev/null") {
       // Ignore deleted files
       continue;
     }
 
     for (const chunk of file.chunks) {
-      const prompt = createPrompt(file, chunk, prDetails, CUSTOM_PROMPTS);
-      const response = await getAIResponse(prompt);
+      const prompt = createPrompt(file, chunk, pr, CUSTOM_PROMPTS);
+      const reviews = await openAIService.getReviews(prompt);
 
-      if (response) {
-        const newComments = createComment(file, chunk, response);
-        if (newComments) {
-          comments.push(...newComments);
+      if (reviews) {
+        const comments = createComment(file, reviews);
+        if (comments) {
+          comments.push(...comments);
         }
       }
     }
